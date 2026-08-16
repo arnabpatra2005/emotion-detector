@@ -6,3 +6,5 @@ opencv-python-headless==4.10.0.84
 h5py==3.16.0
 gunicorn==23.0.0
 gunicorn
+
+gunicorn
