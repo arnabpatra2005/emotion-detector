@@ -1,0 +1,3112 @@
+/* =========================================================
+   AI MOOD DETECTION
+   ADVANCED MODERN UI
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    color: #172033;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff 0%,
+            #f3f6ff 45%,
+            #eef2ff 100%
+        );
+
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   BACKGROUND GLOW
+========================================================= */
+
+.background-glow {
+    position: fixed;
+
+    width: 420px;
+    height: 420px;
+
+    border-radius: 50%;
+
+    filter: blur(100px);
+
+    pointer-events: none;
+
+    opacity: 0.35;
+
+    z-index: -1;
+}
+
+.glow-one {
+    top: -180px;
+    left: -150px;
+
+    background: #a78bfa;
+}
+
+.glow-two {
+    right: -180px;
+    bottom: -150px;
+
+    background: #60a5fa;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.app-container {
+    width: min(1400px, 94%);
+
+    margin: 0 auto;
+
+    padding:
+        24px
+        0
+        40px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.top-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 22px;
+
+    margin-bottom: 28px;
+
+    background: rgba(255, 255, 255, 0.88);
+
+    border: 1px solid rgba(226, 232, 240, 0.95);
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 10px 35px rgba(30, 41, 59, 0.07);
+
+    backdrop-filter: blur(15px);
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+}
+
+.brand-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 8px 20px rgba(99, 102, 241, 0.25);
+}
+
+.brand h1 {
+    font-size: 20px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.3px;
+
+    color: #172033;
+}
+
+.brand p {
+    margin-top: 3px;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 9px 14px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #166534;
+
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 0 4px rgba(34, 197, 94, 0.12);
+
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.45;
+    }
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-section {
+    text-align: center;
+
+    padding:
+        22px
+        20px
+        32px;
+}
+
+.hero-content {
+    max-width: 760px;
+
+    margin: 0 auto;
+}
+
+.eyebrow {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    color: #6366f1;
+}
+
+.hero-content h2 {
+    font-size: clamp(32px, 5vw, 48px);
+
+    line-height: 1.12;
+
+    letter-spacing: -1.8px;
+
+    font-weight: 850;
+
+    color: #172033;
+}
+
+.hero-content h2 span {
+    background:
+        linear-gradient(
+            90deg,
+            #7c3aed,
+            #4f46e5,
+            #2563eb
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+.hero-content p {
+    max-width: 650px;
+
+    margin: 16px auto 0;
+
+    line-height: 1.7;
+
+    font-size: 15px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.workspace {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 24px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card {
+    position: relative;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border:
+        1px solid
+        rgba(226, 232, 240, 0.95);
+
+    border-radius: 24px;
+
+    padding: 26px;
+
+    box-shadow:
+        0 15px 45px rgba(30, 41, 59, 0.08);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 20px 55px rgba(30, 41, 59, 0.11);
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.card-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 22px;
+}
+
+.card-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.6px;
+
+    color: #818cf8;
+}
+
+.card-header h3 {
+    font-size: 21px;
+
+    font-weight: 800;
+
+    color: #172033;
+}
+
+.card-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    font-size: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    border: 1px solid #e0e7ff;
+}
+
+.result-icon {
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #eef2ff
+        );
+
+    border-color: #dbeafe;
+}
+
+
+/* =========================================================
+   UPLOAD AREA
+========================================================= */
+
+.upload-area {
+    position: relative;
+
+    min-height: 330px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        2px dashed
+        #c7d2fe;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fafaff,
+            #f8faff
+        );
+
+    overflow: hidden;
+
+    transition:
+        border-color 0.25s ease,
+        background 0.25s ease;
+}
+
+.upload-area:hover {
+    border-color: #818cf8;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f8f7ff,
+            #f4f7ff
+        );
+}
+
+.upload-area.dragging {
+    border-color: #6366f1;
+
+    background: #eef2ff;
+}
+
+
+/* =========================================================
+   UPLOAD CONTENT
+========================================================= */
+
+.upload-content {
+    text-align: center;
+
+    padding: 30px;
+}
+
+.upload-icon {
+    width: 70px;
+    height: 70px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 18px;
+
+    border-radius: 20px;
+
+    font-size: 32px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ede9fe,
+            #dbeafe
+        );
+
+    box-shadow:
+        0 10px 25px rgba(99, 102, 241, 0.12);
+}
+
+.upload-content h4 {
+    font-size: 18px;
+
+    font-weight: 800;
+
+    color: #1e293b;
+}
+
+.upload-content p {
+    max-width: 320px;
+
+    margin: 8px auto 18px;
+
+    line-height: 1.5;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+.supported {
+    display: block;
+
+    margin-top: 12px;
+
+    font-size: 11px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+========================================================= */
+
+.primary-button {
+    border: none;
+
+    padding: 11px 20px;
+
+    border-radius: 11px;
+
+    cursor: pointer;
+
+    color: white;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 8px 20px rgba(79, 70, 229, 0.22);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.primary-button:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 12px 25px rgba(79, 70, 229, 0.3);
+}
+
+.primary-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   PREVIEW
+========================================================= */
+
+.preview-container {
+    position: absolute;
+
+    inset: 14px;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    background: #f1f5f9;
+}
+
+.preview-container.active {
+    display: flex;
+}
+
+.preview-container img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+
+    border-radius: 12px;
+}
+
+.remove-button {
+    position: absolute;
+
+    top: 10px;
+    right: 10px;
+
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    font-size: 23px;
+
+    line-height: 1;
+
+    color: white;
+
+    background: rgba(15, 23, 42, 0.75);
+
+    backdrop-filter: blur(8px);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.remove-button:hover {
+    background: #ef4444;
+
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   ANALYZE BUTTON
+========================================================= */
+
+.analyze-button {
+    width: 100%;
+
+    min-height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    cursor: pointer;
+
+    color: white;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5,
+            #2563eb
+        );
+
+    box-shadow:
+        0 10px 25px rgba(79, 70, 229, 0.23);
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.analyze-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(79, 70, 229, 0.3);
+}
+
+.analyze-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.analyze-button:disabled {
+    cursor: not-allowed;
+
+    opacity: 0.45;
+
+    box-shadow: none;
+}
+
+.button-arrow {
+    font-size: 18px;
+
+    transition:
+        transform 0.2s ease;
+}
+
+.analyze-button:hover:not(:disabled) .button-arrow {
+    transform: translateX(4px);
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-spinner {
+    display: none;
+
+    width: 17px;
+    height: 17px;
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.35);
+
+    border-top-color: white;
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.7s linear infinite;
+}
+
+.analyze-button.loading .loading-spinner {
+    display: block;
+}
+
+.analyze-button.loading .button-arrow {
+    display: none;
+}
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.error-message {
+    display: none;
+
+    margin-top: 12px;
+
+    padding: 11px 14px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #b91c1c;
+
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+}
+
+.error-message.show {
+    display: block;
+}
+
+
+/* =========================================================
+   EMPTY RESULT
+========================================================= */
+
+.empty-result {
+    min-height: 390px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px;
+}
+
+.empty-icon {
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 20px;
+
+    border-radius: 24px;
+
+    font-size: 36px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    animation:
+        floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.empty-result h4 {
+    margin-bottom: 8px;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.empty-result p {
+    max-width: 340px;
+
+    line-height: 1.6;
+
+    font-size: 13px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+.results-content {
+    display: none;
+}
+
+.results-content.show {
+    display: block;
+
+    animation:
+        resultAppear 0.4s ease;
+}
+
+@keyframes resultAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================================================
+   DOMINANT EMOTION
+========================================================= */
+
+.emotion-result {
+    display: grid;
+
+    grid-template-columns:
+        auto
+        1fr
+        auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px;
+
+    margin-bottom: 24px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f3ff,
+            #eef2ff
+        );
+
+    border: 1px solid #e0e7ff;
+}
+
+.emotion-emoji {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    font-size: 34px;
+
+    background: white;
+
+    box-shadow:
+        0 6px 18px rgba(79, 70, 229, 0.1);
+}
+
+.emotion-main span,
+.confidence span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #64748b;
+}
+
+.emotion-main h4 {
+    font-size: 24px;
+
+    font-weight: 850;
+
+    color: #4f46e5;
+}
+
+.confidence {
+    text-align: right;
+}
+
+.confidence strong {
+    font-size: 22px;
+
+    font-weight: 850;
+
+    color: #172033;
+}
+
+
+/* =========================================================
+   MAIN CONFIDENCE
+========================================================= */
+
+.main-confidence {
+    margin-bottom: 28px;
+}
+
+.bar-heading {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 9px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #475569;
+}
+
+.bar-heading strong {
+    color: #4f46e5;
+}
+
+.progress-track {
+    width: 100%;
+
+    height: 10px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #e2e8f0;
+}
+
+.progress-fill {
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #8b5cf6,
+            #6366f1,
+            #3b82f6
+        );
+
+    transition:
+        width 0.8s cubic-bezier(
+            0.16,
+            1,
+            0.3,
+            1
+        );
+}
+
+
+/* =========================================================
+   PROBABILITIES
+========================================================= */
+
+.probability-section {
+    margin-top: 4px;
+}
+
+.section-title {
+    margin-bottom: 15px;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.probability-item {
+    margin-bottom: 13px;
+}
+
+.probability-heading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 6px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #64748b;
+}
+
+.probability-value {
+    color: #334155;
+}
+
+.probability-track {
+    width: 100%;
+
+    height: 7px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #eef2f7;
+}
+
+.probability-fill {
+    width: 0%;
+
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #a78bfa,
+            #6366f1
+        );
+
+    transition:
+        width 0.8s ease;
+}
+
+
+/* =========================================================
+   EMOTION-SPECIFIC COLORS
+========================================================= */
+
+.probability-item.dominant .probability-heading {
+    color: #4f46e5;
+}
+
+.probability-item.dominant .probability-fill {
+    background:
+        linear-gradient(
+            90deg,
+            #7c3aed,
+            #2563eb
+        );
+}
+
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.features {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+
+    margin-top: 24px;
+}
+
+.feature {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 18px;
+
+    background: rgba(255, 255, 255, 0.9);
+
+    border:
+        1px solid
+        rgba(226, 232, 240, 0.95);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 25px rgba(30, 41, 59, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.feature:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 30px rgba(30, 41, 59, 0.08);
+}
+
+.feature-icon {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    font-size: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+}
+
+.feature h4 {
+    margin-bottom: 3px;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    color: #334155;
+}
+
+.feature p {
+    font-size: 11px;
+
+    line-height: 1.45;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding-top: 28px;
+
+    font-size: 11px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   FOCUS STATES
+========================================================= */
+
+button:focus-visible {
+    outline:
+        3px solid
+        rgba(99, 102, 241, 0.25);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .features {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .empty-result {
+        min-height: 250px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .app-container {
+        width: 92%;
+
+        padding-top: 14px;
+    }
+
+    .top-header {
+        padding: 15px;
+
+        border-radius: 16px;
+    }
+
+    .brand h1 {
+        font-size: 17px;
+    }
+
+    .brand p {
+        font-size: 11px;
+    }
+
+    .brand-icon {
+        width: 42px;
+        height: 42px;
+
+        font-size: 21px;
+    }
+
+    .status-badge {
+        padding: 7px 10px;
+
+        font-size: 10px;
+    }
+
+    .hero-section {
+        padding:
+            15px
+            8px
+            25px;
+    }
+
+    .hero-content h2 {
+        font-size: 32px;
+
+        letter-spacing: -1px;
+    }
+
+    .hero-content p {
+        font-size: 13px;
+    }
+
+    .card {
+        padding: 18px;
+
+        border-radius: 20px;
+    }
+
+    .upload-area {
+        min-height: 280px;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .feature {
+        padding: 15px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .top-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .status-badge {
+        align-self: flex-start;
+    }
+
+    .hero-content h2 {
+        font-size: 28px;
+    }
+
+    .emotion-result {
+        grid-template-columns:
+            auto
+            1fr;
+    }
+
+    .confidence {
+        grid-column: 1 / -1;
+
+        text-align: left;
+
+        padding-top: 5px;
+
+        border-top: 1px solid #e0e7ff;
+    }
+
+    .emotion-emoji {
+        width: 54px;
+        height: 54px;
+
+        font-size: 29px;
+    }
+
+    .emotion-main h4 {
+        font-size: 21px;
+    }
+
+    footer {
+        flex-wrap: wrap;
+
+        text-align: center;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =========================================================
+   MODE BUTTONS
+========================================================= */
+
+.mode-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding: 5px;
+
+    background: #f1f5f9;
+
+    border-radius: 12px;
+}
+
+.mode-button {
+    flex: 1;
+
+    border: none;
+
+    padding: 10px 14px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    color: #64748b;
+
+    background: transparent;
+
+    transition: all 0.2s ease;
+}
+
+.mode-button:hover {
+    color: #4f46e5;
+}
+
+.mode-button.active {
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 5px 15px rgba(79, 70, 229, 0.2);
+}
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+.camera-area {
+    position: relative;
+
+    display: none;
+
+    min-height: 330px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #0f172a;
+}
+
+.camera-area.active {
+    display: block;
+}
+
+.camera-area video {
+    width: 100%;
+    height: 330px;
+
+    display: block;
+
+    object-fit: cover;
+
+    transform: scaleX(-1);
+}
+
+
+/* =========================================================
+   CAMERA OVERLAY
+========================================================= */
+
+.camera-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    pointer-events: none;
+}
+
+.face-guide {
+    width: 190px;
+    height: 240px;
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.75);
+
+    border-radius: 45%;
+
+    box-shadow:
+        0 0 0 9999px
+        rgba(15, 23, 42, 0.15);
+}
+
+
+/* =========================================================
+   CAMERA CONTROLS
+========================================================= */
+
+.camera-controls {
+    display: none;
+
+    gap: 10px;
+
+    margin-top: 15px;
+}
+
+.camera-controls.active {
+    display: flex;
+}
+
+.camera-controls button {
+    flex: 1;
+}
+
+
+/* =========================================================
+   SECONDARY BUTTON
+========================================================= */
+
+.secondary-button {
+    border: none;
+
+    padding: 11px 20px;
+
+    border-radius: 11px;
+
+    cursor: pointer;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    background: #f1f5f9;
+
+    border: 1px solid #e2e8f0;
+
+    transition:
+        all 0.2s ease;
+}
+
+.secondary-button:hover {
+    color: #dc2626;
+
+    background: #fef2f2;
+
+    border-color: #fecaca;
+}
+
+
+/* =========================================================
+   CAMERA RESPONSIVE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .camera-area {
+        min-height: 280px;
+    }
+
+    .camera-area video {
+        height: 280px;
+    }
+
+    .face-guide {
+        width: 150px;
+        height: 200px;
+    }
+
+}
+
+/* =========================================================
+   FORCE RESULT VISIBILITY
+========================================================= */
+
+.results-content.show {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.empty-result {
+    display: flex;
+}
+
+.results-content {
+    display: none;
+}
+
+.results-content.show .emotion-result {
+    display: grid;
+}
+
+.results-content.show .probability-section {
+    display: block;
+}
+
+/* =========================================================
+   LIVE CAMERA AI OVERLAY
+========================================================= */
+
+.camera-area {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   CAMERA VIDEO
+========================================================= */
+
+.camera-area video {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    border-radius: 18px;
+}
+
+
+/* =========================================================
+   FACE OVERLAY CANVAS
+========================================================= */
+
+.overlay-canvas {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    pointer-events: none;
+
+    z-index: 5;
+}
+
+
+/* =========================================================
+   CAMERA STATUS
+========================================================= */
+
+.camera-status {
+    position: absolute;
+
+    top: 14px;
+    left: 14px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(15, 23, 42, 0.78);
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+
+/* =========================================================
+   LIVE DOT
+========================================================= */
+
+.status-live-dot {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #22c55e;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(34, 197, 94, 0.15);
+
+    animation:
+        cameraLivePulse 1.5s infinite;
+}
+
+
+@keyframes cameraLivePulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+}
+
+
+/* =========================================================
+   FACE COUNT
+========================================================= */
+
+.face-count-badge {
+    position: absolute;
+
+    top: 14px;
+    right: 14px;
+
+    z-index: 10;
+
+    padding: 8px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(15, 23, 42, 0.78);
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    backdrop-filter: blur(10px);
+}
+
+
+/* =========================================================
+   CAMERA ACTIVE
+========================================================= */
+
+.camera-area.active {
+    display: block;
+
+    min-height: 480px;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background: #0f172a;
+}
+
+
+/* =========================================================
+   AI DETECTED EFFECT
+========================================================= */
+
+.camera-area.ai-detected {
+    box-shadow:
+        0 0 0 2px rgba(99, 102, 241, 0.25),
+        0 15px 40px rgba(79, 70, 229, 0.15);
+}
+
+
+/* =========================================================
+   MOBILE CAMERA
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .camera-area.active {
+        min-height: 350px;
+    }
+
+    .camera-status,
+    .face-count-badge {
+        font-size: 10px;
+        padding: 7px 10px;
+    }
+
+}
+
+/* =========================================================
+   DARK / WHITE MODE SYSTEM
+========================================================= */
+
+:root {
+    --page-bg:
+        linear-gradient(
+            135deg,
+            #f8faff 0%,
+            #f3f6ff 45%,
+            #eef2ff 100%
+        );
+
+    --text-main: #172033;
+    --text-heading: #172033;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+
+    --surface: rgba(255, 255, 255, 0.95);
+    --surface-soft: rgba(255, 255, 255, 0.88);
+    --surface-light: #f8faff;
+
+    --border: rgba(226, 232, 240, 0.95);
+    --border-soft: #e2e8f0;
+
+    --input-bg:
+        linear-gradient(
+            145deg,
+            #fafaff,
+            #f8faff
+        );
+
+    --mode-bg: #f1f5f9;
+
+    --track-bg: #e2e8f0;
+
+    --shadow:
+        0 15px 45px rgba(30, 41, 59, 0.08);
+
+    --feature-bg: rgba(255, 255, 255, 0.9);
+}
+
+
+/* =========================================================
+   DARK MODE VARIABLES
+========================================================= */
+
+body.dark-mode {
+
+    --page-bg:
+        radial-gradient(
+            circle at top left,
+            #1e1b4b 0%,
+            #0f172a 38%,
+            #020617 100%
+        );
+
+    --text-main: #e2e8f0;
+    --text-heading: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --surface: rgba(15, 23, 42, 0.92);
+    --surface-soft: rgba(15, 23, 42, 0.86);
+    --surface-light: #111827;
+
+    --border: rgba(71, 85, 105, 0.55);
+    --border-soft: #334155;
+
+    --input-bg:
+        linear-gradient(
+            145deg,
+            #111827,
+            #0f172a
+        );
+
+    --mode-bg: #1e293b;
+
+    --track-bg: #334155;
+
+    --shadow:
+        0 20px 55px rgba(0, 0, 0, 0.35);
+
+    --feature-bg: rgba(15, 23, 42, 0.88);
+}
+
+
+/* =========================================================
+   BODY THEME
+========================================================= */
+
+body {
+
+    background: var(--page-bg);
+
+    color: var(--text-main);
+
+    transition:
+        background 0.35s ease,
+        color 0.35s ease;
+}
+
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   THEME TOGGLE
+========================================================= */
+
+.theme-toggle {
+
+    position: relative;
+
+    width: 66px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 1px solid var(--border-soft);
+
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    background: var(--mode-bg);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    overflow: hidden;
+
+    transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.theme-toggle:hover {
+
+    box-shadow:
+        0 5px 18px rgba(99, 102, 241, 0.18);
+}
+
+
+.theme-icon {
+
+    position: relative;
+
+    z-index: 3;
+
+    width: 32px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 14px;
+
+    transition:
+        opacity 0.25s ease;
+}
+
+
+.sun-icon {
+    opacity: 1;
+}
+
+.moon-icon {
+    opacity: 0.45;
+}
+
+
+/* =========================================================
+   TOGGLE SLIDER
+========================================================= */
+
+.theme-toggle-slider {
+
+    position: absolute;
+
+    top: 3px;
+    left: 3px;
+
+    width: 26px;
+    height: 26px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.18);
+
+    transition:
+        transform 0.3s
+        cubic-bezier(
+            0.4,
+            0,
+            0.2,
+            1
+        );
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   DARK TOGGLE STATE
+========================================================= */
+
+body.dark-mode .theme-toggle-slider {
+
+    transform: translateX(32px);
+
+    background: #1e293b;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.45);
+}
+
+body.dark-mode .sun-icon {
+    opacity: 0.4;
+}
+
+body.dark-mode .moon-icon {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   DARK MODE HEADER
+========================================================= */
+
+body.dark-mode .top-header {
+
+    background: var(--surface-soft);
+
+    border-color: var(--border);
+
+    box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.28);
+}
+
+
+body.dark-mode .brand h1 {
+    color: var(--text-heading);
+}
+
+
+body.dark-mode .brand p {
+    color: var(--text-secondary);
+}
+
+
+/* =========================================================
+   DARK MODE HERO
+========================================================= */
+
+body.dark-mode .hero-content h2 {
+    color: var(--text-heading);
+}
+
+body.dark-mode .hero-content p {
+    color: var(--text-secondary);
+}
+
+body.dark-mode .eyebrow {
+    color: #a78bfa;
+}
+
+
+/* =========================================================
+   DARK MODE CARDS
+========================================================= */
+
+body.dark-mode .card {
+
+    background: var(--surface);
+
+    border-color: var(--border);
+
+    box-shadow: var(--shadow);
+}
+
+
+body.dark-mode .card-header h3 {
+    color: var(--text-heading);
+}
+
+
+body.dark-mode .card-label {
+    color: #a78bfa;
+}
+
+
+/* =========================================================
+   DARK MODE CARD ICONS
+========================================================= */
+
+body.dark-mode .card-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+
+    border-color: #3730a3;
+}
+
+
+/* =========================================================
+   DARK MODE MODE BUTTONS
+========================================================= */
+
+body.dark-mode .mode-buttons {
+
+    background: #1e293b;
+}
+
+
+body.dark-mode .mode-button {
+
+    color: #94a3b8;
+}
+
+
+body.dark-mode .mode-button:hover {
+
+    color: #a78bfa;
+}
+
+
+/* =========================================================
+   DARK MODE UPLOAD
+========================================================= */
+
+body.dark-mode .upload-area {
+
+    background: var(--input-bg);
+
+    border-color: #4f46e5;
+}
+
+
+body.dark-mode .upload-area:hover {
+
+    background:
+        linear-gradient(
+            145deg,
+            #17133f,
+            #111827
+        );
+
+    border-color: #818cf8;
+}
+
+
+body.dark-mode .upload-area.dragging {
+
+    background: #1e1b4b;
+
+    border-color: #a78bfa;
+}
+
+
+body.dark-mode .upload-content h4 {
+
+    color: var(--text-heading);
+}
+
+
+body.dark-mode .upload-content p {
+
+    color: var(--text-secondary);
+}
+
+
+body.dark-mode .supported {
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DARK MODE UPLOAD ICON
+========================================================= */
+
+body.dark-mode .upload-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #312e81,
+            #1e3a8a
+        );
+
+    box-shadow:
+        0 10px 25px
+        rgba(79, 70, 229, 0.25);
+}
+
+
+/* =========================================================
+   DARK MODE PREVIEW
+========================================================= */
+
+body.dark-mode .preview-container {
+
+    background: #020617;
+}
+
+
+/* =========================================================
+   DARK MODE SECONDARY BUTTON
+========================================================= */
+
+body.dark-mode .secondary-button {
+
+    color: #cbd5e1;
+
+    background: #1e293b;
+
+    border-color: #334155;
+}
+
+
+body.dark-mode .secondary-button:hover {
+
+    color: #f87171;
+
+    background: #450a0a;
+
+    border-color: #7f1d1d;
+}
+
+
+/* =========================================================
+   DARK MODE EMPTY RESULT
+========================================================= */
+
+body.dark-mode .empty-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+}
+
+
+body.dark-mode .empty-result h4 {
+
+    color: #e2e8f0;
+}
+
+
+body.dark-mode .empty-result p {
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DARK MODE EMOTION RESULT
+========================================================= */
+
+body.dark-mode .emotion-result {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+
+    border-color: #3730a3;
+}
+
+
+body.dark-mode .emotion-emoji {
+
+    background: #0f172a;
+
+    box-shadow:
+        0 6px 18px
+        rgba(79, 70, 229, 0.25);
+}
+
+
+body.dark-mode .emotion-main span,
+body.dark-mode .confidence span {
+
+    color: #94a3b8;
+}
+
+
+body.dark-mode .emotion-main h4 {
+
+    color: #a78bfa;
+}
+
+
+body.dark-mode .confidence strong {
+
+    color: #f8fafc;
+}
+
+
+/* =========================================================
+   DARK MODE CONFIDENCE
+========================================================= */
+
+body.dark-mode .bar-heading {
+
+    color: #94a3b8;
+}
+
+
+body.dark-mode .bar-heading strong {
+
+    color: #a78bfa;
+}
+
+
+body.dark-mode .progress-track {
+
+    background: #334155;
+}
+
+
+/* =========================================================
+   DARK MODE PROBABILITIES
+========================================================= */
+
+body.dark-mode .section-title {
+
+    color: #e2e8f0;
+}
+
+
+body.dark-mode .probability-heading {
+
+    color: #94a3b8;
+}
+
+
+body.dark-mode .probability-value {
+
+    color: #cbd5e1;
+}
+
+
+body.dark-mode .probability-track {
+
+    background: #1e293b;
+}
+
+
+/* =========================================================
+   DARK MODE FEATURES
+========================================================= */
+
+body.dark-mode .feature {
+
+    background: var(--feature-bg);
+
+    border-color: var(--border);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+
+body.dark-mode .feature-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+}
+
+
+body.dark-mode .feature h4 {
+
+    color: #e2e8f0;
+}
+
+
+body.dark-mode .feature p {
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DARK MODE FOOTER
+========================================================= */
+
+body.dark-mode footer {
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DARK MODE ERROR
+========================================================= */
+
+body.dark-mode .error-message {
+
+    color: #fca5a5;
+
+    background: #450a0a;
+
+    border-color: #7f1d1d;
+}
+
+
+/* =========================================================
+   DARK MODE MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .header-actions {
+
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+    .theme-toggle {
+
+        width: 62px;
+    }
+
+}
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* =========================================================
+   DARK / LIGHT MODE BUTTON
+========================================================= */
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-width: 88px;
+    padding: 9px 13px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #475569;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 5px 15px rgba(30, 41, 59, 0.06);
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease,
+        transform 0.2s ease,
+        box-shadow 0.25s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 8px 20px rgba(30, 41, 59, 0.1);
+}
+
+.theme-toggle:active {
+    transform: translateY(0);
+}
+
+.theme-toggle span:first-child {
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+body.dark-mode {
+
+    color: #e5e7eb;
+
+    background:
+        radial-gradient(
+            circle at top left,
+            #1e1b4b 0%,
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at bottom right,
+            #172554 0%,
+            transparent 35%
+        ),
+        #0b1120;
+}
+
+
+/* Background glow */
+
+body.dark-mode .glow-one {
+    background: #7c3aed;
+    opacity: 0.18;
+}
+
+body.dark-mode .glow-two {
+    background: #2563eb;
+    opacity: 0.18;
+}
+
+
+/* Header */
+
+body.dark-mode .top-header {
+
+    background:
+        rgba(15, 23, 42, 0.88);
+
+    border-color:
+        rgba(71, 85, 105, 0.55);
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .brand h1 {
+    color: #f8fafc;
+}
+
+body.dark-mode .brand p {
+    color: #94a3b8;
+}
+
+
+/* Theme button */
+
+body.dark-mode .theme-toggle {
+
+    color: #e2e8f0;
+
+    background: #1e293b;
+
+    border-color: #475569;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+
+/* Status */
+
+body.dark-mode .status-badge {
+
+    color: #86efac;
+
+    background: rgba(20, 83, 45, 0.3);
+
+    border-color:
+        rgba(74, 222, 128, 0.25);
+}
+
+
+/* Cards */
+
+body.dark-mode .card {
+
+    background:
+        rgba(15, 23, 42, 0.94);
+
+    border-color:
+        rgba(71, 85, 105, 0.55);
+
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.28);
+}
+
+body.dark-mode .card-header h3 {
+    color: #f8fafc;
+}
+
+body.dark-mode .card-label {
+    color: #a5b4fc;
+}
+
+body.dark-mode .card-icon {
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+
+    border-color: #3730a3;
+}
+
+
+/* Hero */
+
+body.dark-mode .hero-content h2 {
+    color: #f8fafc;
+}
+
+body.dark-mode .hero-content p {
+    color: #94a3b8;
+}
+
+body.dark-mode .eyebrow {
+    color: #a5b4fc;
+}
+
+
+/* Mode buttons */
+
+body.dark-mode .mode-buttons {
+    background: #1e293b;
+}
+
+body.dark-mode .mode-button {
+    color: #94a3b8;
+}
+
+body.dark-mode .mode-button:hover {
+    color: #a5b4fc;
+}
+
+
+/* Upload */
+
+body.dark-mode .upload-area {
+
+    background:
+        linear-gradient(
+            145deg,
+            #111827,
+            #0f172a
+        );
+
+    border-color: #4338ca;
+}
+
+body.dark-mode .upload-area:hover {
+    background:
+        linear-gradient(
+            145deg,
+            #17153a,
+            #111827
+        );
+
+    border-color: #6366f1;
+}
+
+body.dark-mode .upload-content h4 {
+    color: #f1f5f9;
+}
+
+body.dark-mode .upload-content p {
+    color: #94a3b8;
+}
+
+body.dark-mode .supported {
+    color: #64748b;
+}
+
+
+/* Secondary button */
+
+body.dark-mode .secondary-button {
+
+    color: #cbd5e1;
+
+    background: #1e293b;
+
+    border-color: #334155;
+}
+
+body.dark-mode .secondary-button:hover {
+
+    color: #fca5a5;
+
+    background: #450a0a;
+
+    border-color: #7f1d1d;
+}
+
+
+/* Empty result */
+
+body.dark-mode .empty-result h4 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .empty-result p {
+    color: #64748b;
+}
+
+body.dark-mode .empty-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+}
+
+
+/* Results */
+
+body.dark-mode .emotion-result {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+
+    border-color: #3730a3;
+}
+
+body.dark-mode .emotion-emoji {
+
+    background: #0f172a;
+
+    box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .emotion-main span,
+body.dark-mode .confidence span {
+    color: #94a3b8;
+}
+
+body.dark-mode .emotion-main h4 {
+    color: #a5b4fc;
+}
+
+body.dark-mode .confidence strong {
+    color: #f8fafc;
+}
+
+body.dark-mode .bar-heading {
+    color: #cbd5e1;
+}
+
+body.dark-mode .progress-track {
+    background: #334155;
+}
+
+body.dark-mode .section-title {
+    color: #e2e8f0;
+}
+
+body.dark-mode .probability-heading {
+    color: #94a3b8;
+}
+
+body.dark-mode .probability-value {
+    color: #cbd5e1;
+}
+
+body.dark-mode .probability-track {
+    background: #1e293b;
+}
+
+
+/* Features */
+
+body.dark-mode .feature {
+
+    background:
+        rgba(15, 23, 42, 0.9);
+
+    border-color:
+        rgba(71, 85, 105, 0.55);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .feature h4 {
+    color: #e2e8f0;
+}
+
+body.dark-mode .feature p {
+    color: #64748b;
+}
+
+body.dark-mode .feature-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e1b4b,
+            #172554
+        );
+}
+
+
+/* Footer */
+
+body.dark-mode footer {
+    color: #64748b;
+}
+
+
+/* Error */
+
+body.dark-mode .error-message {
+
+    color: #fca5a5;
+
+    background: #450a0a;
+
+    border-color: #7f1d1d;
+}
+
+
+/* =========================================================
+   MOBILE HEADER
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .header-actions {
+        width: 100%;
+
+        justify-content: space-between;
+    }
+
+    .theme-toggle {
+        min-width: 80px;
+    }
+}
+
+.app-footer {
+    margin-top: 40px;
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+}
+
+.app-footer strong {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.developer-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.developer-link:hover {
+    color: #0a66c2;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* =================================================
+   DEVELOPER LINK
+================================================= */
+
+.developer-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.developer-link:hover {
+    color: #0a66c2;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* =================================================
+   MOBILE RESPONSIVE DESIGN
+================================================= */
+
+@media (max-width: 768px) {
+
+    body {
+        overflow-x: hidden;
+    }
+
+    .app-container {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .brand h1 {
+        font-size: 24px;
+    }
+
+    .brand p {
+        font-size: 12px;
+    }
+
+    .hero-section {
+        padding: 35px 10px;
+    }
+
+    .hero-content h2 {
+        font-size: 32px;
+        line-height: 1.15;
+    }
+
+    .hero-content p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .card {
+        width: 100%;
+    }
+
+    .mode-buttons {
+        width: 100%;
+    }
+
+    .mode-button {
+        flex: 1;
+    }
+
+    .upload-area {
+        min-height: 280px;
+    }
+
+    .camera-area {
+        width: 100%;
+    }
+
+    .camera-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .camera-controls button {
+        width: 100%;
+    }
+
+    .analyze-button {
+        width: 100%;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    footer {
+        flex-wrap: wrap;
+        gap: 6px;
+        text-align: center;
+    }
+
+    .app-footer {
+        flex-wrap: wrap;
+        text-align: center;
+        gap: 7px;
+        padding: 18px 10px;
+    }
+
+}

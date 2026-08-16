@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Emotion Detector</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- Background -->
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+
+    <main class="app-container">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================= -->
+
+        <header class="top-header">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🧠
+                </div>
+
+                <div>
+
+                    <h1>
+                        AI Emotion Detector
+                    </h1>
+
+                    <p>
+                        Advanced Facial Emotion Recognition System
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="header-actions">
+
+    <div class="status-badge">
+
+        <span class="status-dot"></span>
+
+        AI System Online
+
+    </div>
+
+    <button
+        id="themeToggle"
+        class="theme-toggle"
+        type="button"
+        aria-label="Toggle dark mode"
+        title="Toggle dark mode"
+    >
+        <span class="theme-icon sun-icon">☀️</span>
+        <span class="theme-icon moon-icon">🌙</span>
+        <span class="theme-toggle-slider"></span>
+    </button>
+
+</div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             HERO
+        ================================================= -->
+
+        <section class="hero-section">
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    ✨ AI POWERED
+                </div>
+
+                <h2>
+                    Understand Emotions
+                    <span>Through AI</span>
+                </h2>
+
+                <p>
+                    Upload an image or use your camera for real-time AI-powered facial expression analysis.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             WORKSPACE
+        ================================================= -->
+
+        <section class="workspace">
+
+
+            <!-- =================================================
+                 LEFT CARD
+            ================================================= -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            INPUT
+                        </span>
+
+                        <h3>
+                            Face Analysis
+                        </h3>
+
+                    </div>
+
+                    <div class="card-icon">
+                        📷
+                    </div>
+
+                </div>
+
+
+
+                <!-- MODE BUTTONS -->
+
+                <div class="mode-buttons">
+
+                    <button
+                        id="uploadModeButton"
+                        class="mode-button active"
+                        type="button"
+                    >
+                        📁 Upload
+                    </button>
+
+                    <button
+                        id="cameraModeButton"
+                        class="mode-button"
+                        type="button"
+                    >
+                        📷 Camera
+                    </button>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     UPLOAD AREA
+                ================================================= -->
+
+                <div
+                    id="uploadArea"
+                    class="upload-area"
+                >
+
+                    <div
+                        id="uploadContent"
+                        class="upload-content"
+                    >
+
+                        <div class="upload-icon">
+                            📤
+                        </div>
+
+                        <h4>
+                            Upload a facial image
+                        </h4>
+
+                        <p>
+                            Select a clear image containing
+                            a visible face for emotion analysis.
+                        </p>
+
+                        <button
+                            id="selectImageButton"
+                            class="primary-button"
+                            type="button"
+                        >
+                            Select Image
+                        </button>
+
+                        <span class="supported">
+                            JPG • JPEG • PNG
+                        </span>
+
+                    </div>
+
+
+                    <!-- IMAGE PREVIEW -->
+
+                    <div
+                        id="previewContainer"
+                        class="preview-container"
+                    >
+
+                        <img
+                            id="previewImage"
+                            src=""
+                            alt="Selected image"
+                        >
+
+                        <button
+                            id="removeButton"
+                            class="remove-button"
+                            type="button"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- Hidden file input -->
+
+                <input
+                    id="imageInput"
+                    type="file"
+                    accept="image/*"
+                    hidden
+                >
+
+
+
+                <!-- =================================================
+                     CAMERA AREA
+                ================================================= -->
+
+                <div
+    id="cameraArea"
+    class="camera-area"
+>
+
+    <video
+        id="cameraVideo"
+        autoplay
+        playsinline
+    ></video>
+
+    <!-- Hidden canvas used for capturing frames -->
+    <canvas
+        id="cameraCanvas"
+        hidden
+    ></canvas>
+
+    <!-- Visible canvas for face detection overlay -->
+    <canvas
+        id="overlayCanvas"
+        class="overlay-canvas"
+    ></canvas>
+
+    <div class="camera-overlay">
+
+        <div class="face-guide"></div>
+
+    </div>
+
+    <!-- Live AI information -->
+    <div
+        id="cameraStatus"
+        class="camera-status"
+    >
+        <span class="status-live-dot"></span>
+        <span>AI Camera Ready</span>
+    </div>
+
+    <div
+        id="faceCountBadge"
+        class="face-count-badge"
+    >
+        👤 0 Faces
+    </div>
+
+</div>
+
+
+                <!-- CAMERA CONTROLS -->
+
+                <div
+                    id="cameraControls"
+                    class="camera-controls"
+                >
+
+                    <button
+                        id="startCameraButton"
+                        class="primary-button"
+                        type="button"
+                    >
+                        📷 Start Camera
+                    </button>
+
+                    <button
+                        id="stopCameraButton"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        ⏹ Stop Camera
+                    </button>
+
+                </div>
+
+            <button id="analyzeButton" class="analyze-button">
+    🧠 Analyze Emotion
+</button>
+
+                
+
+                <!-- ERROR -->
+
+                <div
+                    id="errorMessage"
+                    class="error-message"
+                ></div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT CARD
+            ================================================= -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <span class="card-label">
+                            AI RESULT
+                        </span>
+
+                        <h3>
+                            Emotion Analysis
+                        </h3>
+
+                    </div>
+
+                    <div class="card-icon result-icon">
+                        🧠
+                    </div>
+
+                </div>
+
+
+
+                <!-- EMPTY RESULT -->
+
+                <div
+                    id="emptyResult"
+                    class="empty-result"
+                >
+
+                    <div class="empty-icon">
+                        😊
+                    </div>
+
+                    <h4>
+                        Waiting for analysis
+                    </h4>
+
+                    <p>
+                        Upload an image or start the camera
+                        to detect facial emotions.
+                    </p>
+
+                </div>
+
+
+
+                <!-- RESULTS -->
+
+                <div
+                    id="resultsContent"
+                    class="results-content"
+                >
+
+
+                    <div class="emotion-result advanced-emotion-result">
+
+                        
+
+    <div class="emotion-visual">
+
+        <div class="emotion-glow"></div>
+
+        <div
+            id="emotionEmoji"
+            class="emotion-emoji"
+        >
+            😊
+        </div>
+
+    </div>
+
+
+    <div class="emotion-main">
+
+        <span class="result-label">
+            DOMINANT EMOTION
+        </span>
+
+        <h4 id="emotionName">
+            Happy
+        </h4>
+
+        <div class="emotion-status">
+            <span class="status-live-dot"></span>
+            AI Detection Active
+        </div>
+
+    </div>
+
+
+    <div class="confidence">
+
+        <span>
+            CONFIDENCE
+        </span>
+
+        <strong id="confidenceValue">
+            0%
+        </strong>
+
+    </div>
+
+</div>
+
+
+
+                    <!-- MAIN CONFIDENCE -->
+
+                    <div class="main-confidence">
+
+                        <div class="bar-heading">
+
+                            <span>
+                                Detection Confidence
+                            </span>
+
+                            <strong id="confidenceText">
+                                0%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="progress-track">
+
+                            <div
+                                id="confidenceBar"
+                                class="progress-fill"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PROBABILITIES -->
+
+                    <div class="probability-section">
+
+                        <div class="section-title">
+                            Emotion Probabilities
+                        </div>
+
+
+                        <div
+                            id="probabilitiesContainer"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FEATURES
+        ================================================= -->
+
+        <section class="features">
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    👁️
+                </div>
+
+                <div>
+
+                    <h4>
+                        Face Detection
+                    </h4>
+
+                    <p>
+                        Detects faces automatically using
+                        computer vision.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    🧠
+                </div>
+
+                <div>
+
+                    <h4>
+                        Deep Learning
+                    </h4>
+
+                    <p>
+                        Uses a trained neural network to
+                        classify facial emotions.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    📊
+                </div>
+
+                <div>
+
+                    <h4>
+                        Probability Analysis
+                    </h4>
+
+                    <p>
+                        Displays probabilities for all
+                        seven emotions.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+        </section>
+
+
+
+        <!-- =================================================
+     FOOTER
+================================================= -->
+
+<footer>
+
+    <span>
+        🧠 AI Emotion Detector
+    </span>
+
+    <span>
+        •
+    </span>
+
+    <span>
+        TensorFlow + OpenCV
+    </span>
+
+</footer>
+
+
+</main>
+
+
+<script
+    src="{{ url_for('static', filename='app.js') }}"
+></script>
+
+
+<footer class="app-footer">
+
+    <span>
+        © 2026 AI Emotion Detector
+    </span>
+
+    <span>
+        •
+    </span>
+
+    <span>
+        Developed by
+        <a
+            href="https://www.linkedin.com/in/arnabpatra2005/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="developer-link"
+        >
+            Arnab Patra
+        </a>
+    </span>
+
+</footer>
+
+
+</body>
+
+</html>
