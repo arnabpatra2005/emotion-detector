@@ -461,7 +461,7 @@ async function analyzeFile(file) {
 
 
 /* =========================================================
-   CAMERA MODE
+   UPLOAD MODE
 ========================================================= */
 
 if (uploadModeButton) {
@@ -480,81 +480,19 @@ if (uploadModeButton) {
                 "active"
             );
 
-
             uploadArea.style.display =
                 "flex";
-
 
             cameraArea.classList.remove(
                 "active"
             );
 
-
             cameraControls.classList.remove(
                 "active"
             );
 
-            /* =========================================================
-   CAPTURE CAMERA FRAME
-========================================================= */
-
-function captureCameraFrame() {
-
-    if (!cameraStream) {
-        showError("Please start the camera first.");
-        return null;
-    }
-
-    if (!cameraVideo.videoWidth || !cameraVideo.videoHeight) {
-        showError("Camera is not ready yet.");
-        return null;
-    }
-
-    cameraCanvas.width = cameraVideo.videoWidth;
-    cameraCanvas.height = cameraVideo.videoHeight;
-
-    const context = cameraCanvas.getContext("2d");
-
-    context.drawImage(
-        cameraVideo,
-        0,
-        0,
-        cameraCanvas.width,
-        cameraCanvas.height
-    );
-
-    return new Promise((resolve) => {
-
-        cameraCanvas.toBlob(
-            (blob) => {
-
-                if (!blob) {
-                    resolve(null);
-                    return;
-                }
-
-                const file = new File(
-                    [blob],
-                    "camera-capture.jpg",
-                    {
-                        type: "image/jpeg"
-                    }
-                );
-
-                resolve(file);
-
-            },
-            "image/jpeg",
-            0.95
-        );
-
-    });
-}
-
-
             analyzeButton.style.display =
                 "flex";
-
 
             analyzeButton.disabled =
                 !selectedFile;
@@ -563,7 +501,6 @@ function captureCameraFrame() {
     );
 
 }
-
 
 /* =========================================================
    CAMERA MODE BUTTON
@@ -1857,11 +1794,4 @@ function updateThemeButton(isDark) {
         );
 
     }
-
 }
-
-<footer className="app-footer">
-  <span>© 2026</span>
-  <span>AI Emotion Detector</span>
-  <span>Developed by <strong>Arnab Patra</strong></span>
-</footer>
