@@ -58,9 +58,7 @@ const confidenceBar =
     document.getElementById("confidenceBar");
 
 const probabilitiesContainer =
-    document.getElementById(
-        "probabilitiesContainer"
-    );
+    document.getElementById("probabilitiesContainer");
 
 
 /* =========================================================
@@ -68,14 +66,10 @@ const probabilitiesContainer =
 ========================================================= */
 
 const uploadModeButton =
-    document.getElementById(
-        "uploadModeButton"
-    );
+    document.getElementById("uploadModeButton");
 
 const cameraModeButton =
-    document.getElementById(
-        "cameraModeButton"
-    );
+    document.getElementById("cameraModeButton");
 
 
 /* =========================================================
@@ -83,49 +77,45 @@ const cameraModeButton =
 ========================================================= */
 
 const cameraArea =
-    document.getElementById(
-        "cameraArea"
-    );
+    document.getElementById("cameraArea");
 
 const cameraVideo =
-    document.getElementById(
-        "cameraVideo"
-    );
+    document.getElementById("cameraVideo");
 
 const cameraCanvas =
-    document.getElementById(
-        "cameraCanvas"
-    );
+    document.getElementById("cameraCanvas");
 
 const overlayCanvas =
-    document.getElementById(
-        "overlayCanvas"
-    );
+    document.getElementById("overlayCanvas");
 
 const cameraStatus =
-    document.getElementById(
-        "cameraStatus"
-    );
+    document.getElementById("cameraStatus");
 
 const faceCountBadge =
-    document.getElementById(
-        "faceCountBadge"
-    );    
+    document.getElementById("faceCountBadge");
 
 const cameraControls =
-    document.getElementById(
-        "cameraControls"
-    );
+    document.getElementById("cameraControls");
 
 const startCameraButton =
-    document.getElementById(
-        "startCameraButton"
-    );
+    document.getElementById("startCameraButton");
 
 const stopCameraButton =
-    document.getElementById(
-        "stopCameraButton"
-    );
+    document.getElementById("stopCameraButton");
+
+
+/* =========================================================
+   THEME ELEMENTS
+========================================================= */
+
+const themeToggle =
+    document.getElementById("themeToggle");
+
+const themeIcon =
+    document.getElementById("themeIcon");
+
+const themeText =
+    document.getElementById("themeText");
 
 
 /* =========================================================
@@ -139,6 +129,17 @@ let cameraStream = null;
 let cameraAnalysisInterval = null;
 
 let cameraAnalyzing = false;
+
+
+/* =========================================================
+   SMOOTHING
+========================================================= */
+
+let smoothedConfidence = null;
+
+let smoothedProbabilities = {};
+
+const SMOOTHING_FACTOR = 0.25;
 
 
 /* =========================================================
@@ -165,44 +166,163 @@ const emotionEmojis = {
 
 
 /* =========================================================
-   SELECT IMAGE
+   PAGE INITIALIZATION
 ========================================================= */
 
-if (selectImageButton) {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    selectImageButton.addEventListener(
-        "click",
-        () => {
+        console.log(
+            "AI Emotion Detector initialized."
+        );
 
-            imageInput.click();
+        initializeTheme();
 
-        }
-    );
+        initializeUpload();
 
-}
+        initializeModes();
+
+        initializeCameraControls();
+
+        initializeAnalyzeButton();
+
+    }
+);
 
 
 /* =========================================================
-   IMAGE SELECTED
+   UPLOAD INITIALIZATION
 ========================================================= */
 
-if (imageInput) {
+function initializeUpload() {
 
-    imageInput.addEventListener(
-        "change",
-        (event) => {
+    /* -----------------------------------------
+       SELECT IMAGE BUTTON
+    ----------------------------------------- */
 
-            const file =
-                event.target.files[0];
+    if (selectImageButton && imageInput) {
 
-            if (!file) {
-                return;
+        selectImageButton.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+
+                imageInput.click();
+
             }
+        );
 
-            handleSelectedFile(file);
+    }
 
-        }
-    );
+
+    /* -----------------------------------------
+       IMAGE INPUT
+    ----------------------------------------- */
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
+            "change",
+            (event) => {
+
+                const file =
+                    event.target.files &&
+                    event.target.files[0];
+
+                if (!file) {
+
+                    return;
+
+                }
+
+                handleSelectedFile(file);
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       REMOVE IMAGE
+    ----------------------------------------- */
+
+    if (removeButton) {
+
+        removeButton.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+
+                removeSelectedImage();
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       DRAG & DROP
+    ----------------------------------------- */
+
+    if (uploadArea) {
+
+        uploadArea.addEventListener(
+            "dragover",
+            (event) => {
+
+                event.preventDefault();
+
+                uploadArea.classList.add(
+                    "drag-over"
+                );
+
+            }
+        );
+
+
+        uploadArea.addEventListener(
+            "dragleave",
+            () => {
+
+                uploadArea.classList.remove(
+                    "drag-over"
+                );
+
+            }
+        );
+
+
+        uploadArea.addEventListener(
+            "drop",
+            (event) => {
+
+                event.preventDefault();
+
+                uploadArea.classList.remove(
+                    "drag-over"
+                );
+
+
+                const file =
+                    event.dataTransfer.files &&
+                    event.dataTransfer.files[0];
+
+
+                if (file) {
+
+                    handleSelectedFile(file);
+
+                }
+
+            }
+        );
+
+    }
 
 }
 
@@ -215,6 +335,11 @@ function handleSelectedFile(file) {
 
     hideError();
 
+
+    /* -----------------------------------------
+       Validate file
+    ----------------------------------------- */
+
     if (!file.type.startsWith("image/")) {
 
         showError(
@@ -222,17 +347,30 @@ function handleSelectedFile(file) {
         );
 
         return;
+
     }
 
+
     selectedFile = file;
+
+
+    /* -----------------------------------------
+       Preview
+    ----------------------------------------- */
 
     const reader =
         new FileReader();
 
-    reader.onload = function(event) {
 
-        previewImage.src =
-            event.target.result;
+    reader.onload = function (event) {
+
+        if (previewImage) {
+
+            previewImage.src =
+                event.target.result;
+
+        }
+
 
         if (uploadContent) {
 
@@ -240,6 +378,7 @@ function handleSelectedFile(file) {
                 "none";
 
         }
+
 
         if (previewContainer) {
 
@@ -249,6 +388,7 @@ function handleSelectedFile(file) {
 
         }
 
+
         if (analyzeButton) {
 
             analyzeButton.disabled =
@@ -256,7 +396,23 @@ function handleSelectedFile(file) {
 
         }
 
+
+        console.log(
+            "Image selected:",
+            file.name
+        );
+
     };
+
+
+    reader.onerror = function () {
+
+        showError(
+            "Could not read the selected image."
+        );
+
+    };
+
 
     reader.readAsDataURL(file);
 
@@ -264,34 +420,60 @@ function handleSelectedFile(file) {
 
 
 /* =========================================================
-   REMOVE IMAGE
+   REMOVE SELECTED IMAGE
 ========================================================= */
 
-if (removeButton) {
+function removeSelectedImage() {
 
-    removeButton.addEventListener(
-        "click",
-        () => {
+    selectedFile = null;
 
-            selectedFile = null;
 
-            imageInput.value = "";
+    if (imageInput) {
 
-            previewImage.src = "";
+        imageInput.value = "";
 
-            previewContainer.classList.remove(
-                "active"
-            );
+    }
 
-            uploadContent.style.display =
-                "block";
 
-            analyzeButton.disabled =
-                true;
+    if (previewImage) {
 
-            resetResults();
+        previewImage.src = "";
 
-        }
+    }
+
+
+    if (previewContainer) {
+
+        previewContainer.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (uploadContent) {
+
+        uploadContent.style.display =
+            "block";
+
+    }
+
+
+    if (analyzeButton) {
+
+        analyzeButton.disabled =
+            true;
+
+    }
+
+
+    resetResults();
+
+    hideError();
+
+
+    console.log(
+        "Image removed."
     );
 
 }
@@ -301,18 +483,31 @@ if (removeButton) {
    ANALYZE BUTTON
 ========================================================= */
 
-if (analyzeButton) {
+function initializeAnalyzeButton() {
+
+    if (!analyzeButton) {
+
+        console.warn(
+            "Analyze button not found."
+        );
+
+        return;
+
+    }
+
 
     analyzeButton.addEventListener(
         "click",
-        async () => {
+        async (event) => {
+
+            event.preventDefault();
 
             hideError();
 
 
-            /* =========================================
+            /* -----------------------------------------
                CAMERA MODE
-            ========================================= */
+            ----------------------------------------- */
 
             if (cameraStream) {
 
@@ -323,9 +518,9 @@ if (analyzeButton) {
             }
 
 
-            /* =========================================
+            /* -----------------------------------------
                UPLOAD MODE
-            ========================================= */
+            ----------------------------------------- */
 
             if (!selectedFile) {
 
@@ -336,6 +531,7 @@ if (analyzeButton) {
                 return;
 
             }
+
 
             await analyzeFile(
                 selectedFile
@@ -355,20 +551,38 @@ async function analyzeFile(file) {
 
     hideError();
 
+
+    if (!file) {
+
+        showError(
+            "Please select an image first."
+        );
+
+        return;
+
+    }
+
+
     console.log(
         "Starting image analysis..."
     );
 
-    analyzeButton.classList.add(
-        "loading"
-    );
 
-    analyzeButton.disabled =
-        true;
+    if (analyzeButton) {
+
+        analyzeButton.classList.add(
+            "loading"
+        );
+
+        analyzeButton.disabled =
+            true;
+
+    }
 
 
     const formData =
         new FormData();
+
 
     formData.append(
         "image",
@@ -430,15 +644,15 @@ async function analyzeFile(file) {
 
         displayResults(data);
 
-
     }
 
-    catch(error) {
+    catch (error) {
 
         console.error(
             "Analysis error:",
             error
         );
+
 
         showError(
             "Could not connect to the AI server."
@@ -448,12 +662,19 @@ async function analyzeFile(file) {
 
     finally {
 
-        analyzeButton.classList.remove(
-            "loading"
-        );
+        if (analyzeButton) {
 
-        analyzeButton.disabled =
-            false;
+            analyzeButton.classList.remove(
+                "loading"
+            );
+
+
+            analyzeButton.disabled =
+                cameraStream
+                    ? false
+                    : !selectedFile;
+
+        }
 
     }
 
@@ -461,92 +682,239 @@ async function analyzeFile(file) {
 
 
 /* =========================================================
-   UPLOAD MODE
+   MODE INITIALIZATION
 ========================================================= */
 
-if (uploadModeButton) {
+function initializeModes() {
 
-    uploadModeButton.addEventListener(
-        "click",
-        () => {
+    /* -----------------------------------------
+       UPLOAD MODE
+    ----------------------------------------- */
 
-            stopCamera();
+    if (uploadModeButton) {
 
-            uploadModeButton.classList.add(
-                "active"
-            );
+        uploadModeButton.addEventListener(
+            "click",
+            (event) => {
 
-            cameraModeButton.classList.remove(
-                "active"
-            );
+                event.preventDefault();
 
-            uploadArea.style.display =
-                "flex";
+                switchToUploadMode();
 
-            cameraArea.classList.remove(
-                "active"
-            );
+            }
+        );
 
-            cameraControls.classList.remove(
-                "active"
-            );
+    }
 
-            analyzeButton.style.display =
-                "flex";
 
-            analyzeButton.disabled =
-                !selectedFile;
+    /* -----------------------------------------
+       CAMERA MODE
+    ----------------------------------------- */
 
-        }
+    if (cameraModeButton) {
+
+        cameraModeButton.addEventListener(
+            "click",
+            async (event) => {
+
+                event.preventDefault();
+
+                await switchToCameraMode();
+
+            }
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SWITCH TO UPLOAD MODE
+========================================================= */
+
+function switchToUploadMode() {
+
+    hideError();
+
+    stopCamera();
+
+
+    if (uploadModeButton) {
+
+        uploadModeButton.classList.add(
+            "active"
+        );
+
+    }
+
+
+    if (cameraModeButton) {
+
+        cameraModeButton.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (uploadArea) {
+
+        uploadArea.style.display =
+            "flex";
+
+    }
+
+
+    if (cameraArea) {
+
+        cameraArea.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (cameraControls) {
+
+        cameraControls.classList.remove(
+            "active"
+        );
+
+    }
+
+
+    if (analyzeButton) {
+
+        analyzeButton.style.display =
+            "flex";
+
+        analyzeButton.disabled =
+            !selectedFile;
+
+    }
+
+
+    console.log(
+        "Upload mode activated."
     );
 
 }
 
+
 /* =========================================================
-   CAMERA MODE BUTTON
+   SWITCH TO CAMERA MODE
 ========================================================= */
 
-if (cameraModeButton) {
+async function switchToCameraMode() {
 
-    cameraModeButton.addEventListener(
-        "click",
-        async () => {
-
-            uploadModeButton.classList.remove(
-                "active"
-            );
-
-            cameraModeButton.classList.add(
-                "active"
-            );
+    hideError();
 
 
-            uploadArea.style.display =
-                "none";
+    if (uploadModeButton) {
+
+        uploadModeButton.classList.remove(
+            "active"
+        );
+
+    }
 
 
-            cameraArea.classList.add(
-                "active"
-            );
+    if (cameraModeButton) {
+
+        cameraModeButton.classList.add(
+            "active"
+        );
+
+    }
 
 
-            cameraControls.classList.add(
-                "active"
-            );
+    if (uploadArea) {
+
+        uploadArea.style.display =
+            "none";
+
+    }
 
 
-            analyzeButton.style.display =
-                "flex";
+    if (cameraArea) {
+
+        cameraArea.classList.add(
+            "active"
+        );
+
+    }
 
 
-            analyzeButton.disabled =
-                true;
+    if (cameraControls) {
+
+        cameraControls.classList.add(
+            "active"
+        );
+
+    }
 
 
-            await startCamera();
+    if (analyzeButton) {
 
-        }
-    );
+        analyzeButton.style.display =
+            "flex";
+
+        analyzeButton.disabled =
+            true;
+
+    }
+
+
+    await startCamera();
+
+}
+
+
+/* =========================================================
+   CAMERA CONTROLS INITIALIZATION
+========================================================= */
+
+function initializeCameraControls() {
+
+    /* -----------------------------------------
+       START CAMERA
+    ----------------------------------------- */
+
+    if (startCameraButton) {
+
+        startCameraButton.addEventListener(
+            "click",
+            async (event) => {
+
+                event.preventDefault();
+
+                await startCamera();
+
+            }
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       STOP CAMERA
+    ----------------------------------------- */
+
+    if (stopCameraButton) {
+
+        stopCameraButton.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+
+                stopCamera();
+
+            }
+        );
+
+    }
 
 }
 
@@ -559,13 +927,45 @@ async function startCamera() {
 
     hideError();
 
+
+    /* -----------------------------------------
+       Already running
+    ----------------------------------------- */
+
+    if (cameraStream) {
+
+        console.log(
+            "Camera already running."
+        );
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       Browser support
+    ----------------------------------------- */
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ) {
+
+        showError(
+            "Camera is not supported by this browser."
+        );
+
+        return;
+
+    }
+
+
     try {
 
-        if (cameraStream) {
-
-            return;
-
-        }
+        console.log(
+            "Requesting camera permission..."
+        );
 
 
         cameraStream =
@@ -588,37 +988,71 @@ async function startCamera() {
             );
 
 
-        cameraVideo.srcObject =
-            cameraStream;
+        /* -----------------------------------------
+           Attach stream
+        ----------------------------------------- */
+
+        if (cameraVideo) {
+
+            cameraVideo.srcObject =
+                cameraStream;
 
 
-        await cameraVideo.play();
+            await cameraVideo.play();
+
+        }
 
 
         console.log(
-            "Camera started."
+            "Camera started successfully."
         );
 
 
-        analyzeButton.disabled =
-            false;
+        if (cameraStatus) {
+
+            cameraStatus.innerHTML =
+                `
+                <span class="status-live-dot"></span>
+                <span>Camera active</span>
+                `;
+
+        }
 
 
-        /*
-         * Start automatic real-time analysis
-         */
+        if (analyzeButton) {
+
+            analyzeButton.disabled =
+                false;
+
+        }
+
+
+        resetRealtimeSmoothing();
+
 
         startRealtimeAnalysis();
 
-
     }
 
-    catch(error) {
+    catch (error) {
 
         console.error(
             "Camera error:",
             error
         );
+
+
+        cameraStream =
+            null;
+
+
+        if (cameraVideo) {
+
+            cameraVideo.srcObject =
+                null;
+
+        }
+
 
         showError(
             "Camera access was denied or is unavailable."
@@ -635,90 +1069,121 @@ async function startCamera() {
 
 function stopCamera() {
 
-
     stopRealtimeAnalysis();
 
 
-    if (!cameraStream) {
+    if (cameraStream) {
 
-        return;
+        cameraStream
+            .getTracks()
+            .forEach(
+                track => track.stop()
+            );
 
     }
-
-
-    cameraStream
-        .getTracks()
-        .forEach(
-            track => track.stop()
-        );
 
 
     cameraStream =
         null;
 
 
-    cameraVideo.srcObject =
+    if (cameraVideo) {
+
+        cameraVideo.pause();
+
+        cameraVideo.srcObject =
+            null;
+
+    }
+
+
+    cameraAnalyzing =
+        false;
+
+
+    smoothedConfidence =
         null;
 
 
-    analyzeButton.disabled =
-        true;
+    smoothedProbabilities =
+        {};
+
+
+    resetRealtimeSmoothing();
+
+
+    if (analyzeButton) {
+
+        analyzeButton.disabled =
+            true;
+
+    }
+
+
+    /* -----------------------------------------
+       Clear overlay
+    ----------------------------------------- */
+
+    if (overlayCanvas) {
+
+        const ctx =
+            overlayCanvas.getContext(
+                "2d"
+            );
+
+
+        if (ctx) {
+
+            ctx.clearRect(
+                0,
+                0,
+                overlayCanvas.width,
+                overlayCanvas.height
+            );
+
+        }
+
+    }
+
+
+    /* -----------------------------------------
+       Face badge
+    ----------------------------------------- */
+
+    if (faceCountBadge) {
+
+        faceCountBadge.textContent =
+            "👤 0 Faces";
+
+    }
+
+
+    /* -----------------------------------------
+       Camera status
+    ----------------------------------------- */
+
+    if (cameraStatus) {
+
+        cameraStatus.innerHTML =
+            `
+            <span class="status-live-dot"></span>
+            <span>Camera stopped</span>
+            `;
+
+    }
+
+
+    if (cameraArea) {
+
+        cameraArea.classList.remove(
+            "ai-detected"
+        );
+
+    }
 
 
     console.log(
         "Camera stopped."
-    );
-
-}
-
-if (overlayCanvas) {
-
-    const ctx =
-        overlayCanvas.getContext(
-            "2d"
-        );
-
-    ctx.clearRect(
-        0,
-        0,
-        overlayCanvas.width,
-        overlayCanvas.height
-    );
-
-}
-
-
-/* =========================================================
-   START CAMERA BUTTON
-========================================================= */
-
-if (startCameraButton) {
-
-    startCameraButton.addEventListener(
-        "click",
-        async () => {
-
-            await startCamera();
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   STOP CAMERA BUTTON
-========================================================= */
-
-if (stopCameraButton) {
-
-    stopCameraButton.addEventListener(
-        "click",
-        () => {
-
-            stopCamera();
-
-        }
     );
 
 }
@@ -732,8 +1197,10 @@ function captureCameraFrame() {
 
     if (
         !cameraStream ||
+        !cameraVideo ||
         !cameraVideo.videoWidth ||
-        !cameraVideo.videoHeight
+        !cameraVideo.videoHeight ||
+        !cameraCanvas
     ) {
 
         return null;
@@ -741,17 +1208,43 @@ function captureCameraFrame() {
     }
 
 
+    const maxWidth =
+        480;
+
+
+    const scale =
+        Math.min(
+            1,
+            maxWidth /
+            cameraVideo.videoWidth
+        );
+
+
     cameraCanvas.width =
-        cameraVideo.videoWidth;
+        Math.round(
+            cameraVideo.videoWidth *
+            scale
+        );
+
 
     cameraCanvas.height =
-        cameraVideo.videoHeight;
+        Math.round(
+            cameraVideo.videoHeight *
+            scale
+        );
 
 
     const context =
         cameraCanvas.getContext(
             "2d"
         );
+
+
+    if (!context) {
+
+        return null;
+
+    }
 
 
     context.drawImage(
@@ -833,11 +1326,6 @@ async function analyzeCameraFrame() {
         );
 
 
-        console.log(
-            "Sending camera frame..."
-        );
-
-
         const response =
             await fetch(
                 "/analyze",
@@ -859,57 +1347,49 @@ async function analyzeCameraFrame() {
 
 
         if (
-    response.ok &&
-    data.success
-) {
+            response.ok &&
+            data.success
+        ) {
 
-    /* Show result on right side */
-    displayResults(data);
+            displayResults(data);
 
-
-    /* Draw face on camera */
-    drawFaceOverlay(data);
+            drawFaceOverlay(data);
 
 
-    /* Update camera status */
+            if (cameraStatus) {
 
-    if (cameraStatus) {
+                cameraStatus.innerHTML =
+                    `
+                    <span class="status-live-dot"></span>
+                    <span>AI Detecting</span>
+                    `;
 
-        cameraStatus.innerHTML =
-            `
-            <span class="status-live-dot"></span>
-            <span>AI Detecting</span>
-            `;
+            }
 
-    }
+        }
 
-}
-else {
+        else {
 
-    /*
-     * No face detected
-     */
-
-    drawFaceOverlay({
-        faces: []
-    });
+            drawFaceOverlay({
+                faces: []
+            });
 
 
-    if (cameraStatus) {
+            if (cameraStatus) {
 
-        cameraStatus.innerHTML =
-            `
-            <span class="status-live-dot"></span>
-            <span>Searching for face...</span>
-            `;
+                cameraStatus.innerHTML =
+                    `
+                    <span class="status-live-dot"></span>
+                    <span>Searching for face...</span>
+                    `;
+
+            }
+
+        }
 
     }
 
-}
-
-    }
-
-    catch(error) {
+    catch (error) {
 
         console.error(
             "Camera analysis error:",
@@ -937,25 +1417,32 @@ function startRealtimeAnalysis() {
     stopRealtimeAnalysis();
 
 
-    /*
-     * Analyze immediately
-     */
+    /* -----------------------------------------
+       Analyze immediately
+    ----------------------------------------- */
 
     analyzeCameraFrame();
 
 
-    /*
-     * Then analyze every 1.5 seconds
-     */
+    /* -----------------------------------------
+       Analyze every 2 seconds
+    ----------------------------------------- */
 
     cameraAnalysisInterval =
         setInterval(
             () => {
 
-                analyzeCameraFrame();
+                if (
+                    cameraStream &&
+                    !cameraAnalyzing
+                ) {
+
+                    analyzeCameraFrame();
+
+                }
 
             },
-            1500
+            2000
         );
 
 }
@@ -967,18 +1454,33 @@ function startRealtimeAnalysis() {
 
 function stopRealtimeAnalysis() {
 
-    if (
-        cameraAnalysisInterval
-    ) {
+    if (cameraAnalysisInterval) {
 
         clearInterval(
             cameraAnalysisInterval
         );
 
+
         cameraAnalysisInterval =
             null;
 
     }
+
+}
+
+
+/* =========================================================
+   RESET REAL-TIME SMOOTHING
+========================================================= */
+
+function resetRealtimeSmoothing() {
+
+    smoothedConfidence =
+        null;
+
+
+    smoothedProbabilities =
+        {};
 
 }
 
@@ -994,6 +1496,10 @@ function displayResults(data) {
         data
     );
 
+
+    /* -----------------------------------------
+       Show result container
+    ----------------------------------------- */
 
     if (emptyResult) {
 
@@ -1015,62 +1521,171 @@ function displayResults(data) {
     }
 
 
+    /* -----------------------------------------
+       Emotion
+    ----------------------------------------- */
+
     const emotion =
         data.emotion ||
         "Unknown";
 
 
-    const confidence =
+    /* -----------------------------------------
+       Confidence
+    ----------------------------------------- */
+
+    const rawConfidence =
         Number(
             data.confidence
         ) || 0;
 
 
-    emotionName.textContent =
-        emotion;
+    if (
+        smoothedConfidence === null
+    ) {
+
+        smoothedConfidence =
+            rawConfidence;
+
+    }
+
+    else {
+
+        smoothedConfidence =
+            smoothedConfidence +
+            (
+                rawConfidence -
+                smoothedConfidence
+            ) *
+            SMOOTHING_FACTOR;
+
+    }
 
 
-    emotionEmoji.textContent =
-        emotionEmojis[emotion] ||
-        "🙂";
+    const confidence =
+        smoothedConfidence;
 
 
-    confidenceValue.textContent =
-        confidence.toFixed(2) +
-        "%";
+    /* -----------------------------------------
+       Emotion name
+    ----------------------------------------- */
+
+    if (emotionName) {
+
+        emotionName.textContent =
+            emotion;
+
+    }
 
 
-    confidenceText.textContent =
-        confidence.toFixed(2) +
-        "%";
+    /* -----------------------------------------
+       Emotion emoji
+    ----------------------------------------- */
+
+    if (emotionEmoji) {
+
+        emotionEmoji.textContent =
+            emotionEmojis[emotion] ||
+            "🙂";
+
+    }
 
 
-    confidenceBar.style.width =
-        "0%";
+    /* -----------------------------------------
+       Confidence value
+    ----------------------------------------- */
+
+    if (confidenceValue) {
+
+        confidenceValue.textContent =
+            confidence.toFixed(2) +
+            "%";
+
+    }
 
 
-    setTimeout(
-        () => {
+    if (confidenceText) {
 
-            confidenceBar.style.width =
-                Math.min(
+        confidenceText.textContent =
+            confidence.toFixed(2) +
+            "%";
+
+    }
+
+
+    /* -----------------------------------------
+       Confidence bar
+    ----------------------------------------- */
+
+    if (confidenceBar) {
+
+        confidenceBar.style.width =
+            Math.min(
+                Math.max(
                     confidence,
-                    100
-                ) +
-                "%";
+                    0
+                ),
+                100
+            ) +
+            "%";
 
-        },
-        100
-    );
+    }
 
+
+    /* -----------------------------------------
+       Probabilities
+    ----------------------------------------- */
 
     if (
         data.probabilities &&
         typeof data.probabilities === "object"
     ) {
 
-        displayProbabilities(
+        const smoothed =
+            {};
+
+
+        Object.entries(
             data.probabilities
+        ).forEach(
+            ([name, rawValue]) => {
+
+                const value =
+                    Number(rawValue) || 0;
+
+
+                if (
+                    smoothedProbabilities[name] ===
+                    undefined
+                ) {
+
+                    smoothedProbabilities[name] =
+                        value;
+
+                }
+
+                else {
+
+                    smoothedProbabilities[name] =
+                        smoothedProbabilities[name] +
+                        (
+                            value -
+                            smoothedProbabilities[name]
+                        ) *
+                        SMOOTHING_FACTOR;
+
+                }
+
+
+                smoothed[name] =
+                    smoothedProbabilities[name];
+
+            }
+        );
+
+
+        displayProbabilities(
+            smoothed
         );
 
     }
@@ -1086,6 +1701,13 @@ function displayProbabilities(
     probabilities
 ) {
 
+    if (!probabilitiesContainer) {
+
+        return;
+
+    }
+
+
     probabilitiesContainer.innerHTML =
         "";
 
@@ -1095,6 +1717,10 @@ function displayProbabilities(
             probabilities
         );
 
+
+    /* -----------------------------------------
+       Highest first
+    ----------------------------------------- */
 
     entries.sort(
         (a, b) =>
@@ -1106,6 +1732,14 @@ function displayProbabilities(
     entries.forEach(
         ([emotion, value]) => {
 
+            const numericValue =
+                Number(value) || 0;
+
+
+            /* -----------------------------------------
+               Item
+            ----------------------------------------- */
+
             const item =
                 document.createElement(
                     "div"
@@ -1115,6 +1749,10 @@ function displayProbabilities(
             item.className =
                 "probability-item";
 
+
+            /* -----------------------------------------
+               Heading
+            ----------------------------------------- */
 
             const heading =
                 document.createElement(
@@ -1126,6 +1764,10 @@ function displayProbabilities(
                 "probability-heading";
 
 
+            /* -----------------------------------------
+               Emotion name
+            ----------------------------------------- */
+
             const name =
                 document.createElement(
                     "span"
@@ -1135,6 +1777,10 @@ function displayProbabilities(
             name.textContent =
                 emotion;
 
+
+            /* -----------------------------------------
+               Percentage
+            ----------------------------------------- */
 
             const percentage =
                 document.createElement(
@@ -1147,8 +1793,7 @@ function displayProbabilities(
 
 
             percentage.textContent =
-                Number(value)
-                    .toFixed(2) +
+                numericValue.toFixed(2) +
                 "%";
 
 
@@ -1162,6 +1807,10 @@ function displayProbabilities(
             );
 
 
+            /* -----------------------------------------
+               Track
+            ----------------------------------------- */
+
             const track =
                 document.createElement(
                     "div"
@@ -1171,6 +1820,10 @@ function displayProbabilities(
             track.className =
                 "probability-track";
 
+
+            /* -----------------------------------------
+               Fill
+            ----------------------------------------- */
 
             const fill =
                 document.createElement(
@@ -1202,18 +1855,24 @@ function displayProbabilities(
             );
 
 
-            setTimeout(
+            /* -----------------------------------------
+               Animate
+            ----------------------------------------- */
+
+            requestAnimationFrame(
                 () => {
 
                     fill.style.width =
                         Math.min(
-                            Number(value),
+                            Math.max(
+                                numericValue,
+                                0
+                            ),
                             100
                         ) +
                         "%";
 
-                },
-                100
+                }
             );
 
         }
@@ -1242,8 +1901,25 @@ function resetResults() {
             "show"
         );
 
+
         resultsContent.style.display =
             "none";
+
+    }
+
+
+    if (emotionName) {
+
+        emotionName.textContent =
+            "—";
+
+    }
+
+
+    if (emotionEmoji) {
+
+        emotionEmoji.textContent =
+            "🙂";
 
     }
 
@@ -1256,6 +1932,22 @@ function resetResults() {
     }
 
 
+    if (confidenceValue) {
+
+        confidenceValue.textContent =
+            "0.00%";
+
+    }
+
+
+    if (confidenceText) {
+
+        confidenceText.textContent =
+            "0.00%";
+
+    }
+
+
     if (probabilitiesContainer) {
 
         probabilitiesContainer.innerHTML =
@@ -1263,17 +1955,32 @@ function resetResults() {
 
     }
 
+
+    smoothedConfidence =
+        null;
+
+
+    smoothedProbabilities =
+        {};
+
 }
 
 
 /* =========================================================
-   ERROR
+   ERROR HANDLING
 ========================================================= */
 
 function showError(message) {
 
+    console.error(
+        message
+    );
+
+
     if (!errorMessage) {
+
         return;
+
     }
 
 
@@ -1291,7 +1998,9 @@ function showError(message) {
 function hideError() {
 
     if (!errorMessage) {
+
         return;
+
     }
 
 
@@ -1305,6 +2014,7 @@ function hideError() {
 
 }
 
+
 /* =========================================================
    DRAW FACE DETECTION OVERLAY
 ========================================================= */
@@ -1315,24 +2025,30 @@ function drawFaceOverlay(data) {
         !overlayCanvas ||
         !cameraVideo
     ) {
+
         return;
+
     }
 
 
     const width =
         cameraVideo.videoWidth;
 
+
     const height =
         cameraVideo.videoHeight;
 
 
     if (!width || !height) {
+
         return;
+
     }
 
 
     overlayCanvas.width =
         width;
+
 
     overlayCanvas.height =
         height;
@@ -1344,6 +2060,13 @@ function drawFaceOverlay(data) {
         );
 
 
+    if (!ctx) {
+
+        return;
+
+    }
+
+
     ctx.clearRect(
         0,
         0,
@@ -1352,9 +2075,9 @@ function drawFaceOverlay(data) {
     );
 
 
-    /* =========================================
-       GET FACES
-    ========================================= */
+    /* -----------------------------------------
+       Get faces
+    ----------------------------------------- */
 
     let faces = [];
 
@@ -1364,7 +2087,8 @@ function drawFaceOverlay(data) {
         Array.isArray(data.faces)
     ) {
 
-        faces = data.faces;
+        faces =
+            data.faces;
 
     }
 
@@ -1389,43 +2113,58 @@ function drawFaceOverlay(data) {
     }
 
 
-    /* =========================================
-       FACE COUNT
-    ========================================= */
+    /* -----------------------------------------
+       Face count
+    ----------------------------------------- */
 
     if (faceCountBadge) {
 
         faceCountBadge.textContent =
-            `👤 ${faces.length} Face${faces.length === 1 ? "" : "s"}`;
+            `👤 ${faces.length} Face${
+                faces.length === 1
+                    ? ""
+                    : "s"
+            }`;
 
     }
 
 
-    if (faces.length > 0) {
+    /* -----------------------------------------
+       Detection state
+    ----------------------------------------- */
 
-        cameraArea.classList.add(
-            "ai-detected"
-        );
+    if (cameraArea) {
+
+        if (faces.length > 0) {
+
+            cameraArea.classList.add(
+                "ai-detected"
+            );
+
+        }
+
+        else {
+
+            cameraArea.classList.remove(
+                "ai-detected"
+            );
+
+        }
 
     }
-    else {
-
-        cameraArea.classList.remove(
-            "ai-detected"
-        );
-
-    }
 
 
-    /* =========================================
-       DRAW EACH FACE
-    ========================================= */
+    /* -----------------------------------------
+       Draw faces
+    ----------------------------------------- */
 
     faces.forEach(
         (face) => {
 
             if (!face.box) {
+
                 return;
+
             }
 
 
@@ -1434,35 +2173,45 @@ function drawFaceOverlay(data) {
 
 
             const x =
-                Number(box.x);
+                Number(box.x) || 0;
+
 
             const y =
-                Number(box.y);
+                Number(box.y) || 0;
+
 
             const boxWidth =
-                Number(box.width);
+                Number(box.width) || 0;
+
 
             const boxHeight =
-                Number(box.height);
+                Number(box.height) || 0;
 
 
             const emotion =
                 face.emotion ||
+                data.emotion ||
                 "Unknown";
 
 
-            const confidence =
+            const rawConfidence =
                 Number(
-                    face.confidence
+                    face.confidence ??
+                    data.confidence
                 ) || 0;
 
 
-            /* =====================================
-               FACE BOX
-            ===================================== */
+            const confidence =
+                rawConfidence;
+
+
+            /* -----------------------------------------
+               Face box
+            ----------------------------------------- */
 
             ctx.strokeStyle =
                 "#8b5cf6";
+
 
             ctx.lineWidth =
                 4;
@@ -1470,6 +2219,7 @@ function drawFaceOverlay(data) {
 
             ctx.shadowColor =
                 "rgba(139, 92, 246, 0.5)";
+
 
             ctx.shadowBlur =
                 12;
@@ -1487,9 +2237,9 @@ function drawFaceOverlay(data) {
                 0;
 
 
-            /* =====================================
-               LABEL
-            ===================================== */
+            /* -----------------------------------------
+               Label
+            ----------------------------------------- */
 
             const label =
                 `${emotion} ${confidence.toFixed(1)}%`;
@@ -1518,7 +2268,9 @@ function drawFaceOverlay(data) {
 
 
             let labelY =
-                y - labelHeight - 8;
+                y -
+                labelHeight -
+                8;
 
 
             if (labelY < 0) {
@@ -1529,9 +2281,9 @@ function drawFaceOverlay(data) {
             }
 
 
-            /* =====================================
-               LABEL BACKGROUND
-            ===================================== */
+            /* -----------------------------------------
+               Label background
+            ----------------------------------------- */
 
             ctx.fillStyle =
                 "rgba(79, 70, 229, 0.92)";
@@ -1540,21 +2292,39 @@ function drawFaceOverlay(data) {
             ctx.beginPath();
 
 
-            ctx.roundRect(
-                labelX,
-                labelY,
-                labelWidth,
-                labelHeight,
-                8
-            );
+            if (
+                typeof ctx.roundRect ===
+                "function"
+            ) {
+
+                ctx.roundRect(
+                    labelX,
+                    labelY,
+                    labelWidth,
+                    labelHeight,
+                    8
+                );
+
+            }
+
+            else {
+
+                ctx.rect(
+                    labelX,
+                    labelY,
+                    labelWidth,
+                    labelHeight
+                );
+
+            }
 
 
             ctx.fill();
 
 
-            /* =====================================
-               LABEL TEXT
-            ===================================== */
+            /* -----------------------------------------
+               Label text
+            ----------------------------------------- */
 
             ctx.fillStyle =
                 "#ffffff";
@@ -1567,9 +2337,9 @@ function drawFaceOverlay(data) {
             );
 
 
-            /* =====================================
-               CORNER MARKERS
-            ===================================== */
+            /* -----------------------------------------
+               Corner markers
+            ----------------------------------------- */
 
             drawCornerMarkers(
                 ctx,
@@ -1584,6 +2354,7 @@ function drawFaceOverlay(data) {
 
 }
 
+
 /* =========================================================
    FACE BOX CORNER MARKERS
 ========================================================= */
@@ -1596,19 +2367,25 @@ function drawCornerMarkers(
     height
 ) {
 
-    const size = 18;
+    const size =
+        18;
+
 
     ctx.strokeStyle =
         "#22c55e";
 
+
     ctx.lineWidth =
         4;
+
 
     ctx.lineCap =
         "round";
 
 
-    /* TOP LEFT */
+    /* -----------------------------------------
+       Top left
+    ----------------------------------------- */
 
     ctx.beginPath();
 
@@ -1630,7 +2407,9 @@ function drawCornerMarkers(
     ctx.stroke();
 
 
-    /* TOP RIGHT */
+    /* -----------------------------------------
+       Top right
+    ----------------------------------------- */
 
     ctx.beginPath();
 
@@ -1652,7 +2431,9 @@ function drawCornerMarkers(
     ctx.stroke();
 
 
-    /* BOTTOM LEFT */
+    /* -----------------------------------------
+       Bottom left
+    ----------------------------------------- */
 
     ctx.beginPath();
 
@@ -1674,7 +2455,9 @@ function drawCornerMarkers(
     ctx.stroke();
 
 
-    /* BOTTOM RIGHT */
+    /* -----------------------------------------
+       Bottom right
+    ----------------------------------------- */
 
     ctx.beginPath();
 
@@ -1696,84 +2479,114 @@ function drawCornerMarkers(
     ctx.stroke();
 
 }
+
 
 /* =========================================================
-   DARK / LIGHT MODE
+   THEME INITIALIZATION
 ========================================================= */
 
-const themeToggle =
-    document.getElementById("themeToggle");
+function initializeTheme() {
 
-const themeIcon =
-    document.getElementById("themeIcon");
-
-const themeText =
-    document.getElementById("themeText");
+    const savedTheme =
+        localStorage.getItem(
+            "emotionDetectorTheme"
+        );
 
 
-/* Load saved theme */
+    if (savedTheme === "dark") {
 
-const savedTheme =
-    localStorage.getItem("emotionDetectorTheme");
-
-
-if (savedTheme === "dark") {
-
-    document.body.classList.add(
-        "dark-mode"
-    );
-
-    updateThemeButton(true);
-
-}
+        document.body.classList.add(
+            "dark-mode"
+        );
 
 
-/* Toggle theme */
+        updateThemeButton(
+            true
+        );
 
-if (themeToggle) {
+    }
 
-    themeToggle.addEventListener(
-        "click",
-        () => {
+    else {
 
-            const isDark =
-                document.body.classList.toggle(
-                    "dark-mode"
+        document.body.classList.remove(
+            "dark-mode"
+        );
+
+
+        updateThemeButton(
+            false
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       Theme toggle
+    ----------------------------------------- */
+
+    if (themeToggle) {
+
+        themeToggle.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+
+
+                const isDark =
+                    document.body.classList.toggle(
+                        "dark-mode"
+                    );
+
+
+                localStorage.setItem(
+                    "emotionDetectorTheme",
+                    isDark
+                        ? "dark"
+                        : "light"
                 );
 
 
-            localStorage.setItem(
-                "emotionDetectorTheme",
-                isDark
-                    ? "dark"
-                    : "light"
-            );
+                updateThemeButton(
+                    isDark
+                );
 
+            }
+        );
 
-            updateThemeButton(
-                isDark
-            );
-
-        }
-    );
+    }
 
 }
 
 
-/* Update button */
+/* =========================================================
+   UPDATE THEME BUTTON
+========================================================= */
 
-function updateThemeButton(isDark) {
+function updateThemeButton(
+    isDark
+) {
 
-    if (!themeIcon || !themeText) {
+    if (
+        !themeIcon ||
+        !themeText ||
+        !themeToggle
+    ) {
+
         return;
+
     }
 
 
     if (isDark) {
 
-        themeIcon.textContent = "☀️";
+        themeIcon.textContent =
+            "☀️";
 
-        themeText.textContent = "Light";
+
+        themeText.textContent =
+            "Light";
+
 
         themeToggle.setAttribute(
             "aria-label",
@@ -1784,9 +2597,13 @@ function updateThemeButton(isDark) {
 
     else {
 
-        themeIcon.textContent = "🌙";
+        themeIcon.textContent =
+            "🌙";
 
-        themeText.textContent = "Dark";
+
+        themeText.textContent =
+            "Dark";
+
 
         themeToggle.setAttribute(
             "aria-label",
@@ -1794,4 +2611,5 @@ function updateThemeButton(isDark) {
         );
 
     }
+
 }
